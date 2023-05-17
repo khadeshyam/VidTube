@@ -5,7 +5,6 @@ import { createError } from "../error.js";
 import jwt from "jsonwebtoken";
 
 export const signup = async (req, res, next) => {
-      console.log(req.body);
       try {
             const user = await User.findOne({ $or: [{ name: req.body?.name }, { email: req.body?.email }] });
             if (user) return res.status(409).json({ message: 'user already exists' });
