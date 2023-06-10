@@ -1,0 +1,57 @@
+version: "3.8"
+
+services:
+  mongo:
+    container_name: vidtube-mongodb
+    restart: always
+    image: mongo:6.0.5
+    volumes:
+      - db-data:/data/db
+    ports:
+      - 27017:27017
+    env_file:
+      - ./env/db.env
+    networks:
+      - vidtube-network
+
+  backend:
+    container_name: vidtube-backend
+    restart: always
+    build:
+      context: ./server
+    image: shyam2056/vidtube-backend
+    volumes:
+      - ./server:/server
+    ports:
+      - 5000:5000
+    depends_on:
+      - mongo
+    env_file:
+      - ./env/server.env
+    networks:
+      - vidtube-network
+
+  frontend:
+    container_name: vidtube-frontend
+    restart: always
+    stdin_open: true
+    tty: true
+    build:
+      context: ./client
+    image: shyam2056/vidtube-frontend
+    volumes:
+      - ./client/src:/client/src
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+    env_file:
+      - ./env/client.env
+    networks:
+      - vidtube-network
+
+volumes:
+  db-data:
+
+networks:
+  vidtube-network:
