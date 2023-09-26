@@ -22,7 +22,6 @@ services:
       args:
         - NODE_ENV=development
       context: ./server
-      target: development
     volumes:
       - ./server:/server
       - /server/node_modules
@@ -45,7 +44,6 @@ services:
       args:
         - NODE_ENV=development
       context: ./client
-      target: development
     volumes:
       - ./client/src:/client/src
       - /client/node_modules
