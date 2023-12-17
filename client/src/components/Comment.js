@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import moment from "moment";
 import styled from "styled-components";
+
+import axios from "axios";
 
 const Container = styled.div`
   display: flex;
@@ -35,19 +38,37 @@ const Text = styled.span`
   font-size: 14px;
 `;
 
-const Comment = () => {
+const Comment = (comment) => {
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        // Replace with your actual API endpoint
+        const response = await axios.get(`/users/find/${comment.userId}`);
+        setUser(response.data);
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    };
+
+    fetchUser();
+  }, [comment.userId]);
+  console.log(user);
+
   return (
     <Container>
-      <Avatar src="https://yt3.ggpht.com/yti/APfAmoE-Q0ZLJ4vk3vqmV4Kwp0sbrjxLyB8Q4ZgNsiRH=s88-c-k-c0x00ffffff-no-rj-mo" />
+      <Avatar
+        alt={user?.name}
+        src={user?.img}
+      />
       <Details>
         <Name>
-          John Doe <Date>1 day ago</Date>
+          {user?.name} <Date> {moment(comment?.createdAt)?.fromNow()}</Date>
         </Name>
         <Text>
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vel, ex
-          laboriosam ipsam aliquam voluptatem perferendis provident modi, sequi
-          tempore reiciendis quod, optio ullam cumque? Quidem numquam sint
-          mollitia totam reiciendis?
+          {comment?.desc}
         </Text>
       </Details>
     </Container>

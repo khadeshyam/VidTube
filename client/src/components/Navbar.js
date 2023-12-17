@@ -74,27 +74,40 @@ const Avatar = styled.img`
   background-color: #999;
 `;
 
+// ... other imports ...
+
 const Navbar = () => {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const { currentUser } = useSelector((state) => state.user);
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    navigate(`/search?q=${q}`);
+  };
+
+  console.log(currentUser);
+
   return (
     <>
       <Container>
         <Wrapper>
-          <Search>
+          <Search as="form" onSubmit={handleSearchSubmit}>
             <Input
               placeholder="Search"
               onChange={(e) => setQ(e.target.value)}
             />
-            <SearchOutlinedIcon onClick={()=>navigate(`/search?q=${q}`)}/>
+            <SearchOutlinedIcon onClick={handleSearchSubmit} />
           </Search>
           {currentUser ? (
             <User>
               <VideoCallOutlinedIcon onClick={() => setOpen(true)} />
-              <Avatar src={currentUser.img} />
-              {currentUser.name}
+              <Avatar
+                src={currentUser?.img}
+                alt={currentUser.name}
+              />
+              {currentUser?.name}
             </User>
           ) : (
             <Link to="signin" style={{ textDecoration: "none" }}>

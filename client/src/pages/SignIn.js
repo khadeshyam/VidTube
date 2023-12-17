@@ -5,7 +5,6 @@ import styled from "styled-components";
 import { loginFailure, loginStart, loginSuccess } from "../redux/userSlice";
 import { auth, provider } from "../firebase";
 import { signInWithPopup } from "firebase/auth";
-import { async } from "@firebase/util";
 import { useNavigate } from "react-router-dom";
 const Container = styled.div`
   display: flex;
@@ -77,6 +76,7 @@ const SignIn = () => {
   const navigate = useNavigate()
 
   const handleLogin = async (e) => {
+    console.log("login");
     e.preventDefault();
     dispatch(loginStart());
     try {
@@ -90,46 +90,40 @@ const SignIn = () => {
 
   const signInWithGoogle = async () => {
     dispatch(loginStart());
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        axios
-          .post("/auth/google", {
-            name: result.user.displayName,
-            email: result.user.email,
-            img: result.user.photoURL,
-          })
-          .then((res) => {
-            console.log(res)
-            dispatch(loginSuccess(res.data));
-            navigate("/")
-          });
-      })
-      .catch((error) => {
-        dispatch(loginFailure());
+    try {
+      const result = await signInWithPopup(auth, provider);
+      console.log(result.user);
+      const res = await axios.post("/auth/google", {
+        name: result.user.displayName,
+        email: result.user.email,
+        img: result.user.photoURL,
       });
+      dispatch(loginSuccess(res.data));
+      navigate("/")
+    } catch (error) {
+      dispatch(loginFailure());
+    }
   };
 
-  //TODO: REGISTER FUNCTIONALITY
   const handleSignUp = async (e) => {
     e.preventDefault();
     dispatch(loginStart())
     try {
-      const res = await axios.post("/auth/signup", {name,email, password });
+      const res = await axios.post("/auth/signup", { name, email, password });
       dispatch(loginSuccess(res.data));
       navigate("/");
     } catch (err) {
       dispatch(loginFailure());
     }
   }
-
   return (
     <Container>
       <Wrapper>
         <Title>Sign in</Title>
         <SubTitle>to continue to LamaTube</SubTitle>
         <Input
-          placeholder="username"
-          onChange={(e) => setName(e.target.value)}
+          placeholder="email"
+          onChange={(e) => setEmail(e.target.value)}
         />
         <Input
           type="password"

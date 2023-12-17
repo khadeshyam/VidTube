@@ -135,6 +135,7 @@ const Upload = ({ setOpen }) => {
 
   const handleUpload = async (e)=>{
     e.preventDefault();
+    console.log({...inputs, tags})
     const res = await axios.post("/videos", {...inputs, tags})
     setOpen(false)
     res.status===200 && navigate(`/video/${res.data._id}`)
@@ -147,7 +148,7 @@ const Upload = ({ setOpen }) => {
         <Title>Upload a New Video</Title>
         <Label>Video:</Label>
         {videoPerc > 0 ? (
-          "Uploading:" + videoPerc
+          "Uploading:" + videoPerc + "%"
         ) : (
           <Input
             type="file"
@@ -170,7 +171,7 @@ const Upload = ({ setOpen }) => {
         <Input
           type="text"
           placeholder="Separate the tags with commas."
-          onChance={handleTags}
+          onChange={handleTags}
         />
         <Label>Image:</Label>
         {imgPerc > 0 ? (

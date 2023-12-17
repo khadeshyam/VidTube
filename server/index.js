@@ -18,7 +18,7 @@ const connect = () => {
       console.log("Connected to MongoDB");
     })
     .catch((err) => {
-      throw err;
+      console.log('err connecting to MongoDB\n', err)
     });
 };
 
